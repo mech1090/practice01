@@ -17,14 +17,14 @@ app.use(express.urlencoded({extended:true}))
 app.use('/user',userPage)
 
 app.set('view engine','pug')
-app.set('views','/views')
+app.set('views','./views')
 
 
 app.get('/',(req,res)=>{
     res.send('PLUMBING OKK')
 })
 app.get('*',(req,res)=>{
-    res.send('BAD_REQUEST')
+    res.status(404).send('SERVER NOT FOUND')
 })
 
 const port = config.get('port') || 8080
