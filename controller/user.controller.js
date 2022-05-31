@@ -3,6 +3,7 @@ const User = require('../model/user')
 const bcrypt = require('bcrypt')
 const config = require('config')
 const userService = require('../services/user.service')
+const { validateProduct } = require('../validators/user.validator')
 
 const getLoginForm = (req,res)=>{
     res.render('login/layout')
@@ -27,6 +28,10 @@ const getSignupForm = (req,res)=>{
 const signup = async(req,res)=>{
     const {email,password} = req.body
     const fields = {email,password}
+    const {error,value} = validateProduct(fields)
+    if(error){
+       return res.status(400).send(error.details[0].message)
+    }
  //   const findUser = await User.findOne({email})
      const findUser = await userService.find({email})
     if(findUser){
@@ -34,6 +39,7 @@ const signup = async(req,res)=>{
     }
     const hatchedPassword = await bcrypt.hash(password,config.get('hashed.salt'))
     const newFields = {email,hatchedPassword}
+    
 //    const createUser = await User.create({email,password:hatchedPassword})
     const createUser = await userService.createUser({email,password:hatchedPassword})
     return res.render('signup/layout',{message:"User Created"})
